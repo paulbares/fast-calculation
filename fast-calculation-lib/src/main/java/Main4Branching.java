@@ -3,18 +3,14 @@ import com.univocity.parsers.csv.CsvParser;
 import com.univocity.parsers.csv.CsvParserSettings;
 
 import java.io.File;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 /**
- * Same as but with univocity parser. TODO retest with jackson. This class uses {@link FastDoubleParser} because parsing
- * double what what causing the slowness.
- * <p>
- * -XX:-CompactStrings does not change anything as suggested here https://github.com/wrandelshofer/FastDoubleParser
+ * Same as Main3 but with if condition
  */
-public class Main3 {
+public class Main4Branching {
 
   public static void main(String[] args) throws Exception {
     List<Result> results = new ArrayList<>();
@@ -31,21 +27,18 @@ public class Main3 {
               while ((row = parser.parseNext()) != null) {
                 int year = Integer.parseInt(row[0]);
                 int mileage = Integer.parseInt(row[1]);
-//                double price = Double.parseDouble(row[2]); // javolution is 1 sec better !! with the file
-//                        300MB !!
-//                double price = javolution.text.TypeFormat.parseDouble(row[2]); // FastDoubleParser is
-//                        almost 1 sec better !! with the file 300MB !!
                 double price = FastDoubleParser.parseDouble(row[2]);
 
-                result.sum[0] += year;
-                result.sum[1] += mileage;
-                result.min[0] = Math.min(result.min[0], year);
-                result.min[1] = Math.min(result.min[1], mileage);
-                result.sumPrice += price;
-                result.minPrice = Math.min(result.minPrice, price);
+                if (year >= 2005) {
+                  result.sum[0] += year;
+                  result.sum[1] += mileage;
+                  result.min[0] = Math.min(result.min[0], year);
+                  result.min[1] = Math.min(result.min[1], mileage);
+                  result.sumPrice += price;
+                  result.minPrice = Math.min(result.minPrice, price);
 
-                result.count++;
-                result.count += row.length;
+                  result.count++;
+                }
               }
 
               parser.stopParsing();
@@ -57,11 +50,11 @@ public class Main3 {
   }
 
   static class Result {
-    long[] sum = new long[2];
-    long[] min = new long[]{Long.MAX_VALUE, Long.MAX_VALUE};
+    int[] sum = new int[2];
+    int[] min = new int[]{Integer.MAX_VALUE, Integer.MAX_VALUE};
     double sumPrice = 0;
     double minPrice = 0;
-    long count = 0;
+    int count = 0;
 
     @Override
     public String toString() {

@@ -3,18 +3,25 @@ import com.univocity.parsers.csv.CsvParser;
 import com.univocity.parsers.csv.CsvParserSettings;
 
 import java.io.File;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 /**
- * Same as but with univocity parser. TODO retest with jackson. This class uses {@link FastDoubleParser} because parsing
- * double what what causing the slowness.
- * <p>
- * -XX:-CompactStrings does not change anything as suggested here https://github.com/wrandelshofer/FastDoubleParser
+ * Same as Main3 but with if condition
+ *
+ * It does not seem to change much. Maybe it is because it is way more costly to parse the strings than the rest.
+ * Plus the result for price is false.
+ *
+ * branchless:
+ * Average test time: 1238.1923076923076ms
+ * Result{sum=[124879230, 1349871553], min=[2005, 1000], sumPrice=2.1870514021047272E11, minPrice=0.0, count=4330352}
+ *
+ * branching:
+ * Average test time: 1347.576923076923ms
+ * Result{sum=[124879230, 1349871553], min=[2005, 1000], sumPrice=2.1870514021047272E11, minPrice=0.0, count=4330352}
  */
-public class Main3 {
+public class Main5Branchless {
 
   public static void main(String[] args) throws Exception {
     List<Result> results = new ArrayList<>();
@@ -31,21 +38,20 @@ public class Main3 {
               while ((row = parser.parseNext()) != null) {
                 int year = Integer.parseInt(row[0]);
                 int mileage = Integer.parseInt(row[1]);
-//                double price = Double.parseDouble(row[2]); // javolution is 1 sec better !! with the file
-//                        300MB !!
-//                double price = javolution.text.TypeFormat.parseDouble(row[2]); // FastDoubleParser is
-//                        almost 1 sec better !! with the file 300MB !!
                 double price = FastDoubleParser.parseDouble(row[2]);
 
-                result.sum[0] += year;
-                result.sum[1] += mileage;
-                result.min[0] = Math.min(result.min[0], year);
-                result.min[1] = Math.min(result.min[1], mileage);
-                result.sumPrice += price;
-                result.minPrice = Math.min(result.minPrice, price);
+                // branchless
+                int t = (year - 2005) >> 31;
+                int i = ~t; // if year is >= 2005, i is -1 i.e all 1 bits, zero otherwise
+                result.sum[0] += i & year;
+                result.sum[1] += i & mileage;
+                result.min[0] = 2005; // easy!!
+                result.min[1] = Math.min(result.min[1], (t >>> 1) | mileage); // little trick. arg = if a >= 128 { b
+                // } else { Integer.MAX_VALUE }. Work if mileage is positive only
+                result.sumPrice += Double.longBitsToDouble(((long) i) & Double.doubleToRawLongBits(price));
+                result.minPrice = Math.min(result.minPrice, Double.longBitsToDouble((long) (t >>> 1) | (long) price));
 
-                result.count++;
-                result.count += row.length;
+                result.count += i & 1;
               }
 
               parser.stopParsing();
@@ -57,11 +63,11 @@ public class Main3 {
   }
 
   static class Result {
-    long[] sum = new long[2];
-    long[] min = new long[]{Long.MAX_VALUE, Long.MAX_VALUE};
+    int[] sum = new int[2];
+    int[] min = new int[]{Integer.MAX_VALUE, Integer.MAX_VALUE};
     double sumPrice = 0;
     double minPrice = 0;
-    long count = 0;
+    int count = 0;
 
     @Override
     public String toString() {

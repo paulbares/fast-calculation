@@ -1,69 +1,47 @@
-import com.fasterxml.jackson.databind.MappingIterator;
-import com.fasterxml.jackson.dataformat.csv.CsvMapper;
-import com.fasterxml.jackson.dataformat.csv.CsvParser;
-
-import java.io.File;
-import java.net.URL;
-
 public class JacksonTestParser {
 
-    public static void main(String[] args) throws Exception {
-        CsvMapper mapper = new CsvMapper();
-        // important: we need "array wrapping" (see next section) here:
-        mapper.enable(CsvParser.Feature.WRAP_AS_ARRAY);
-        mapper.enable(CsvParser.Feature.ALLOW_COMMENTS);
-        URL resource = Thread.currentThread().getContextClassLoader().getResource("ford_escort.csv");
-        File csvFile = new File(resource.toURI()); // or from String, URL etc
+  public static void main(String[] args) throws Exception {
+    int a = 129;
+    int sum = 2;
 
-        MappingIterator<String[]> it = mapper.readerFor(String[].class).readValues(csvFile);
-        while (it.hasNext()) {
-            String[] row = it.next();
-//            System.out.println(Arrays.toString(row));
-            // and voila, column values in an array. Works with Lists as well
+    int t = (a - 128) >> 31;
+    sum += ~t & a;
+//    System.out.println(Integer.toBinaryString(t));
+//    System.out.println(Integer.toBinaryString(t >>> 1));
+//    System.out.println(Integer.toBinaryString(Integer.MAX_VALUE));
+//    System.out.println((t >>> 1) == Integer.MAX_VALUE);
+//    System.out.println((t >>> 1) | a);
+//    double v = Double.longBitsToDouble(((long) ~t) & (Double.doubleToRawLongBits(0.5)));
+    double v = Double.longBitsToDouble(((long) ~t) & (long) 0.5);
+    System.out.println(v);
+//    System.out.println("result:" + sign1(0));
+//    System.out.println("result:" + sign2(0));
 
-            // FIXME Parse row depending on the type
-            int value = Integer.parseInt(row[0]);
+    // if a < 128, then ~t is 0.
+    // if a >= 128 then ~t is -1, ~t is Integer.MAX_VALUE
 
-            // FIXME compute on the fly?
+    // We want min = min(min, b) if  a >= 128
+    // We want min = min(min, Integer.MAX_VALUE) if a < 128
+    // we want arg = if a >= 128 { b } else { Integer.MAX_VALUE }
+  }
 
-            // FIXME compute only if value if positive (branch prediction)
-            if (Integer.signum(value) >= 0) { // remove branch here
-                // compute
-            }
-        }
+  /**
+   * 1 if positive, 0 if negative or zero !! different than {@link #sign2(int)}
+   *
+   * @param i
+   * @return
+   */
+  static int sign1(int i) {
+    return (-i) >>> 31;
+  }
 
-//        {
-//            System.out.println("Positive:");
-//            int i = 9;
-//            System.out.println("result:" + sign1(i));
-//            System.out.println("result:" + sign2(i));
-//        }
-//        {
-//            System.out.println("Negative:");
-//            int i = -9;
-//            System.out.println("result:" + sign1(i));
-//            System.out.println("result:" + sign2(i));
-//        }
-        System.out.println("result:" + sign1(0));
-        System.out.println("result:" + sign2(0));
-
-    }
-
-    /**
-     * 1 if positive, 0 if negative or zero !! different than {@link #sign2(int)}
-     * @param i
-     * @return
-     */
-    static int sign1(int i) {
-        return (-i) >>> 31;
-    }
-
-    /**
-     * 1 if positive or zero, 0 if negative
-     * @param i
-     * @return
-     */
-    static int sign2(int i) {
-        return (~(i >> 31)) >>> 31;
-    }
+  /**
+   * 1 if positive or zero, 0 if negative
+   *
+   * @param i
+   * @return
+   */
+  static int sign2(int i) {
+    return (~(i >> 31)) >>> 31;
+  }
 }

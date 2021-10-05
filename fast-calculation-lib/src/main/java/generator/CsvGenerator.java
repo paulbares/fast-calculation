@@ -23,7 +23,7 @@ public class CsvGenerator {
     }
 
     public static void main(String[] args) throws IOException {
-        File file = new File("/Users/paul/dev/github/fast-calculation/fast-calculation-lib/src/main/resources/ford.csv");
+        File file = new File("/Users/Paul.Bares/github/fast-calculation/fast-calculation-lib/src/main/resources/ford.csv");
         Random rand = new Random();
         for (int i = 0; i < 256; i++) {
             StringBuilder sb = new StringBuilder();

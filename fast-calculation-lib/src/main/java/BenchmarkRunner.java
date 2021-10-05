@@ -12,8 +12,8 @@ public final class BenchmarkRunner {
      * @throws Exception
      */
     public void run(Benchmark test) throws Exception {
-        final int numWarms = 2;
-        final int numRuns = 8;
+        final int numWarms = 6;
+        final int numRuns = 26;
         long maxRun = -1;
         long minRun = Long.MAX_VALUE;
         long totalElapsed = 0;
