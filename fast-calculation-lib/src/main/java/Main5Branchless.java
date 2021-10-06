@@ -1,10 +1,10 @@
 import ch.randelshofer.fastdoubleparser.FastDoubleParser;
 import com.univocity.parsers.csv.CsvParser;
 import com.univocity.parsers.csv.CsvParserSettings;
+import generator.CsvGenerator;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -24,11 +24,10 @@ import java.util.List;
 public class Main5Branchless {
 
   public static void main(String[] args) throws Exception {
-    List<Result> results = new ArrayList<>();
+    List<AggregateResult> results = new ArrayList<>();
     BenchmarkRunner.INSTANCE.run(() -> {
-              Result result = new Result();
-              File file = new File("/Users/Paul.Bares/github/fast-calculation/fast-calculation-lib/src/main" +
-                      "/resources/ford.csv");
+              AggregateResult result = new AggregateResult();
+              File file = new File(CsvGenerator.FILE_PATH);
 
               CsvParserSettings settings = new CsvParserSettings();
               CsvParser parser = new CsvParser(settings);
@@ -60,24 +59,5 @@ public class Main5Branchless {
     );
 
     System.out.println(results);
-  }
-
-  static class Result {
-    int[] sum = new int[2];
-    int[] min = new int[]{Integer.MAX_VALUE, Integer.MAX_VALUE};
-    double sumPrice = 0;
-    double minPrice = 0;
-    int count = 0;
-
-    @Override
-    public String toString() {
-      return "Result{" +
-              "sum=" + Arrays.toString(sum) +
-              ", min=" + Arrays.toString(min) +
-              ", sumPrice=" + sumPrice +
-              ", minPrice=" + minPrice +
-              ", count=" + count +
-              '}';
-    }
   }
 }

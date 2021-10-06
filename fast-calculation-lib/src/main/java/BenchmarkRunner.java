@@ -1,8 +1,12 @@
 public final class BenchmarkRunner {
 
-    public static final BenchmarkRunner INSTANCE = new BenchmarkRunner();
+    public static final BenchmarkRunner INSTANCE = new BenchmarkRunner(false);
+    public static final BenchmarkRunner SINGLE = new BenchmarkRunner(true);
 
-    private BenchmarkRunner() {
+    final boolean single;
+
+    private BenchmarkRunner(boolean single) {
+        this.single = single;
     }
 
     /**
@@ -12,6 +16,10 @@ public final class BenchmarkRunner {
      * @throws Exception
      */
     public void run(Benchmark test) throws Exception {
+        if (single) {
+            test.run();
+            return;
+        }
         final int numWarms = 6;
         final int numRuns = 26;
         long maxRun = -1;

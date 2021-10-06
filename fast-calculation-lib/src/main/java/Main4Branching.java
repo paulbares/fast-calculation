@@ -1,6 +1,7 @@
 import ch.randelshofer.fastdoubleparser.FastDoubleParser;
 import com.univocity.parsers.csv.CsvParser;
 import com.univocity.parsers.csv.CsvParserSettings;
+import generator.CsvGenerator;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -16,8 +17,7 @@ public class Main4Branching {
     List<Result> results = new ArrayList<>();
     BenchmarkRunner.INSTANCE.run(() -> {
               Result result = new Result();
-              File file = new File("/Users/Paul.Bares/github/fast-calculation/fast-calculation-lib/src/main" +
-                      "/resources/ford.csv");
+              File file = new File(CsvGenerator.FILE_PATH);
 
               CsvParserSettings settings = new CsvParserSettings();
               CsvParser parser = new CsvParser(settings);
