@@ -27,7 +27,8 @@ public class Main4Branching {
               while ((row = parser.parseNext()) != null) {
                 int year = Integer.parseInt(row[0]);
                 int mileage = Integer.parseInt(row[1]);
-                double price = FastDoubleParser.parseDouble(row[2]);
+//                double price = FastDoubleParser.parseDouble(row[2]);
+                double price = Double.parseDouble(row[2]);
 
                 if (year >= 2005) {
                   result.sum[0] += year;

@@ -10,9 +10,9 @@ class AggregateResult {
     double minPrice = 0;
     int count = 0;
 
-    public void aggregate(String[] row) {
-        int year = Integer.parseInt(row[0]);
-        int mileage = Integer.parseInt(row[1]);
+    public void aggregate(CharSequence[] row) {
+        int year = Integer.parseInt(row[0], 0, row[0].length(), 10);
+        int mileage = Integer.parseInt(row[1], 0, row[1].length(), 10);
         double price = FastDoubleParser.parseDouble(row[2]);
 
         // branchless

@@ -30,11 +30,11 @@ public class Main3 {
               while ((row = parser.parseNext()) != null) {
                 int year = Integer.parseInt(row[0]);
                 int mileage = Integer.parseInt(row[1]);
-//                double price = Double.parseDouble(row[2]); // javolution is 1 sec better !! with the file
+                double price = Double.parseDouble(row[2]); // javolution is 1 sec better !! with the file
 //                        300MB !!
 //                double price = javolution.text.TypeFormat.parseDouble(row[2]); // FastDoubleParser is
 //                        almost 1 sec better !! with the file 300MB !!
-                double price = FastDoubleParser.parseDouble(row[2]);
+//                double price = FastDoubleParser.parseDouble(row[2]);
 
                 result.sum[0] += year;
                 result.sum[1] += mileage;
