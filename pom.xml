@@ -17,8 +17,8 @@
     <modules>
         <module>fast-calculation-lib</module>
         <module>microbench</module>
-
     </modules>
+
     <dependencyManagement>
         <dependencies>
             <dependency>

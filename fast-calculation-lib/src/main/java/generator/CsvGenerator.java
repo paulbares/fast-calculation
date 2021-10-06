@@ -8,7 +8,7 @@ import java.util.Random;
 
 public class CsvGenerator {
 
-    public static final String FILE_PATH = "/Users/paul/dev/github/fast-calculation/fast-calculation-lib/src/main/resources/ford_300MB.csv";
+    public static final String FILE_PATH = "/Users/paul/dev/github/fast-calculation/fast-calculation-lib/src/main/resources/ford_6GB.csv";
 
     /**
      * Writes a {@link String} into a file.
@@ -27,7 +27,7 @@ public class CsvGenerator {
     public static void main(String[] args) throws IOException {
         File file = new File(FILE_PATH);
         Random rand = new Random();
-        for (int i = 0; i < 256; i++) {
+        for (int i = 0; i < 4096; i++) {
             StringBuilder sb = new StringBuilder();
             for (int j = 0; j < 32768; j++) {
                 sb
