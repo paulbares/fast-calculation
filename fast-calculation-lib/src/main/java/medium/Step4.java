@@ -18,7 +18,7 @@ public class Step4 {
         System.out.println("Process " + ProcessHandle.current().pid());
     }
 
-    static final int capacity = 1 << 16; // good perf that value
+    static final int capacity = 1 << 22; // good perf that value
 
     public static void main(String[] args) throws Exception {
         List<AggregateResult> results = new ArrayList<>();
@@ -116,14 +116,14 @@ public class Step4 {
 
         public void aggregate(int year, int mileage, double price) {
             if (year >= 2005) {
-                min[0] = Math.min(min[0], year);
-                max[0] = Math.max(min[0], year);
-                min[1] = Math.min(min[1], mileage);
-                max[1] = Math.max(max[1], mileage);
-                minPrice = Math.min(minPrice, price);
-                maxPrice = Math.max(maxPrice, price);
+//                min[0] = Math.min(min[0], year);
+//                max[0] = Math.max(min[0], year);
+//                min[1] = Math.min(min[1], mileage);
+//                max[1] = Math.max(max[1], mileage);
+//                minPrice = Math.min(minPrice, price);
+//                maxPrice = Math.max(maxPrice, price);
                 sumMileage += mileage;
-                sumPrice += price;
+//                sumPrice += price;
                 count++;
             }
         }

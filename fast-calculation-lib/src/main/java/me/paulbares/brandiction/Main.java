@@ -2,7 +2,6 @@ package me.paulbares.brandiction;
 
 import me.paulbares.BenchmarkRunner;
 
-import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -20,7 +19,7 @@ public class Main {
         }
 
         // !!! With this, the next loop runs faster
-        Arrays.sort(data);
+//        Arrays.sort(data);
 
         AtomicLong bigSum = new AtomicLong();
         BenchmarkRunner.INSTANCE.run(() -> {

@@ -16,46 +16,46 @@ public class Step1 {
 
         List<AggregateResult> results = new ArrayList<>();
         INSTANCE.run(() -> {
-            Iterator<String> iterator = Files.lines(file.toPath()).iterator();
-            AggregateResult result = new AggregateResult();
-            while (iterator.hasNext()) {
-                String line = iterator.next();
-                String[] values = line.split(",");
-                int year = Integer.parseInt(values[0]);
-                int mileage = Integer.parseInt(values[1]);
-                double price = Double.parseDouble(values[2]);
+Iterator<String> iterator = Files.lines(file.toPath()).iterator();
+AggregateResult result = new AggregateResult();
+while (iterator.hasNext()) {
+    String line = iterator.next();
+    String[] values = line.split(",");
+    int year = Integer.parseInt(values[0]);
+    int mileage = Integer.parseInt(values[1]);
+    double price = Double.parseDouble(values[2]);
 
-                result.aggregate(year, mileage, price);
-            }
+    result.aggregate(year, mileage, price);
+}
             results.add(result);
         });
 
         System.out.println(results.get(0).buildResult());
     }
 
-    public static class AggregateResult {
+public static class AggregateResult {
 
-        final int[] min = new int[]{Integer.MAX_VALUE, Integer.MAX_VALUE};
-        final int[] max = new int[]{0, 0};
-        int sumMileage = 0;
-        double sumPrice = 0;
-        double minPrice = Double.MAX_VALUE;
-        double maxPrice = 0;
-        int count = 0;
+    final int[] min = new int[]{Integer.MAX_VALUE, Integer.MAX_VALUE};
+    final int[] max = new int[]{0, 0};
+    int sumMileage = 0;
+    double sumPrice = 0;
+    double minPrice = Double.MAX_VALUE;
+    double maxPrice = 0;
+    int count = 0;
 
-        public void aggregate(int year, int mileage, double price) {
-            if (year >= 2005) {
-                min[0] = Math.min(min[0], year);
-                max[0] = Math.max(min[0], year);
-                min[1] = Math.min(min[1], mileage);
-                max[1] = Math.max(max[1], mileage);
-                minPrice = Math.min(minPrice, price);
-                maxPrice = Math.max(maxPrice, price);
-                sumMileage += mileage;
-                sumPrice += price;
-                count++;
-            }
+    public void aggregate(int year, int mileage, double price) {
+        if (year >= 2005) {
+            min[0] = Math.min(min[0], year);
+            max[0] = Math.max(min[0], year);
+            min[1] = Math.min(min[1], mileage);
+            max[1] = Math.max(max[1], mileage);
+            minPrice = Math.min(minPrice, price);
+            maxPrice = Math.max(maxPrice, price);
+            sumMileage += mileage;
+            sumPrice += price;
+            count++;
         }
+    }
 
         public String buildResult() {
             StringBuilder sb = new StringBuilder();

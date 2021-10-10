@@ -30,19 +30,19 @@ public class CsvGenerator {
         for (int i = 0; i < 4096; i++) {
             StringBuilder sb = new StringBuilder();
             for (int j = 0; j < 32768; j++) {
-                sb
-                        .append(rand.nextInt(1990, 2021)) // year
-                        .append(',')
-                        .append(rand.nextInt(1000, 300_000)) // mileage
-                        .append(',')
-                        .append(rand.nextDouble(1000, 100_000)) // selling price
-                        .append(',')
-                        .append(BRAND[rand.nextInt(0, BRAND.length)]) // brand
-                        .append(',')
-                        .append(rand.nextBoolean() ? "M" : "A") // transmission
-                        .append(',')
-                        .append(rand.nextBoolean() ? "petrol" : "diesel") // fuel type
-                        .append(System.lineSeparator());
+//                sb
+//                        .append(rand.nextInt(1990, 2021)) // year
+//                        .append(',')
+//                        .append(rand.nextInt(1000, 300_000)) // mileage
+//                        .append(',')
+//                        .append(rand.nextDouble(1000, 100_000)) // selling price
+//                        .append(',')
+//                        .append(BRAND[rand.nextInt(0, BRAND.length)]) // brand
+//                        .append(',')
+//                        .append(rand.nextBoolean() ? "M" : "A") // transmission
+//                        .append(',')
+//                        .append(rand.nextBoolean() ? "petrol" : "diesel") // fuel type
+//                        .append(System.lineSeparator());
             }
             writeFile(file.getPath(), sb.toString());
         }

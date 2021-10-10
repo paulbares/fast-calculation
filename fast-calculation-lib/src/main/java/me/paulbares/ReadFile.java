@@ -7,6 +7,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.util.Iterator;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ReadFile {
 
@@ -32,6 +33,8 @@ public class ReadFile {
         System.out.println(capacity);
     }
 
+    static final AtomicInteger line = new AtomicInteger();
+
     private static void read1() throws IOException {
         FileInputStream fileInputStream = new FileInputStream(name);
         FileChannel fileChannel = fileInputStream.getChannel();
@@ -55,6 +58,10 @@ public class ReadFile {
         int limit = byteBuffer.limit();
         while (limit > 0) {
             byte b = byteBuffer.get();
+//            boolean eof = b == '\n' || b == '\r';
+//            if (eof) {
+//                line.getAndIncrement();
+//            }
 //            System.out.print((char) b);
 //            if(b == '\n') {
 //                int j = 0;

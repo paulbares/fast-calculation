@@ -70,4 +70,9 @@ public final class BenchmarkRunner {
         System.out.println("Average test time: " + avgElapsed + "ms");
     }
 
+    public static void main(String[] args) {
+        int t = (2006 - 2005) >>> 1;
+        System.out.println(Integer.toBinaryString(t));
+        System.out.println(Integer.toBinaryString(~t));
+    }
 }
