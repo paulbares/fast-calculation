@@ -1,6 +1,9 @@
+package me.paulbares;
+
 import com.google.common.base.Splitter;
 import com.univocity.parsers.common.input.EOFException;
 import generator.CsvGenerator;
+import javolution.text.CharArray;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -12,34 +15,13 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Continuation of {@link Main5Branchless}.
- * This parse in parallel and remove also usage of univocity in favor of {@link Splitter}. because
- * {@link com.univocity.parsers.csv.CsvParser#parseLine(String)} throws a {@link EOFException} after reading a new line....
- * => So several millions !!!
- *
- *
- * Flight recording with Splitter shows that it allocates a lot , a lot of String:
- *
- *
- * Stack Trace	Count	Percentage
- * byte[] java.util.Arrays.copyOfRange(byte[], int, int)	2181	70.6 %
- * String java.lang.StringLatin1.newString(byte[], int, int)	2181	70.6 %
- * String java.lang.String.substring(int, int)	2172	70.3 %
- * CharSequence java.lang.String.subSequence(int, int)	2171	70.2 %
- * String com.google.common.base.Splitter$SplittingIterator.computeNext()	2171	70.2 %
- *
- * (58 GiB, 46.3 GiB, 150 MiB)
- * Class	Max Live Count	Max Live Size	Live Size Increase	Alloc Total	Total Allocation (%)	Alloc in TLABs	Alloc Outside TLABs
- * byte[]				6.2304101728E10 B	55.44948983362241 %
- * java.lang.String				4.9686681432E10 B	44.220220828445925 %
- * java.nio.HeapCharBuffer				1.57631584E8 B	0.14028917313701836 %
- *
- * Maybe we can do better !!!! and works only with byte[] array if we parse line ourself!!
+ * Continuation of {@link Main6BisParsingInParallel} and remove usage of {@link Splitter} to reduce the amount
+ * of strings allocated...
  */
-public class Main6BisParsingInParallel {
+public class Main6BisCustomParsing {
 
     // expected result:
-    // AggregateResult{sum=[124751138, -1552455681], min=[2005, 1000], sumPrice=2.187283345427398E11, minPrice=0.0, count=4330277}
+    // me.paulbares.AggregateResult{sum=[124751138, -1552455681], min=[2005, 1000], sumPrice=2.187283345427398E11, minPrice=0.0, count=4330277}
     public static void main(String[] args) throws Exception {
         File file = new File(CsvGenerator.FILE_PATH);
 
@@ -83,15 +65,32 @@ public class Main6BisParsingInParallel {
             }
 
             this.result = new AggregateResult();
+            // FIXME
             Splitter on = Splitter.on(',');
-            String[] row = new String[6]; // FIXME might change
+//            String[] row = new String[6]; // FIXME might change
+            CharArray[] buffer = new CharArray[3];
+            for (int i = 0; i < buffer.length; i++) {
+                buffer[i] = new CharArray();
+            }
+
             spliterator.forEachRemaining(s -> {
-                Iterable<String> fields = on.split(s);
-                int i = 0;
-                for (String field : fields) {
-                    row[i++] = field;
+                char[] chars = s.toCharArray();
+                int index = 0;
+                int prev = 0;
+                for (int i = 0; i < chars.length; i++) {
+                    if (chars[i] == ',') {
+                        if (index < 3) { // numbers are the three first columns
+                            buffer[index++].setArray(chars, prev, i - prev);
+                            prev = i + 1;
+
+                            if (index == 3) { // FULL
+                                break;
+                            }
+                        }
+                    }
                 }
-                this.result.aggregate(row);
+
+                this.result.aggregate(buffer);
             });
             tryComplete();
         }

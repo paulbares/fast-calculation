@@ -1,3 +1,5 @@
+package me.paulbares;
+
 public interface Benchmark {
 
     void compute() throws Exception;

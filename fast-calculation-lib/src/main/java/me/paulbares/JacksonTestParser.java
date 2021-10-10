@@ -1,3 +1,5 @@
+package me.paulbares;
+
 public class JacksonTestParser {
 
   public static void main(String[] args) throws Exception {

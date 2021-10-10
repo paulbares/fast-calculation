@@ -1,8 +1,10 @@
+package me.paulbares;
+
 import ch.randelshofer.fastdoubleparser.FastDoubleParser;
 
 import java.util.Arrays;
 
-class AggregateResult {
+public class AggregateResult {
 
     int[] sum = new int[2];
     int[] min = new int[]{Integer.MAX_VALUE, Integer.MAX_VALUE};

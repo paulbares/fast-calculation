@@ -1,3 +1,5 @@
+package me.paulbares;
+
 import ch.randelshofer.fastdoubleparser.FastDoubleParser;
 import com.univocity.parsers.csv.CsvParser;
 import com.univocity.parsers.csv.CsvParserSettings;

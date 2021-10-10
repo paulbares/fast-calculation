@@ -1,3 +1,5 @@
+package me.paulbares;
+
 import com.univocity.parsers.csv.CsvParser;
 import com.univocity.parsers.csv.CsvParserSettings;
 import generator.CsvGenerator;
@@ -16,7 +18,7 @@ import java.util.concurrent.RecursiveAction;
 public class Main6ParsingInParallel2 {
 
     // expected result:
-    // AggregateResult{sum=[124751138, -1552455681], min=[2005, 1000], sumPrice=2.187283345427398E11, minPrice=0.0, count=4330277}
+    // me.paulbares.AggregateResult{sum=[124751138, -1552455681], min=[2005, 1000], sumPrice=2.187283345427398E11, minPrice=0.0, count=4330277}
     public static void main(String[] args) throws Exception {
         File file = new File(CsvGenerator.FILE_PATH);
 

@@ -1,3 +1,5 @@
+package me.paulbares;
+
 public final class BenchmarkRunner {
 
     public static final BenchmarkRunner INSTANCE = new BenchmarkRunner(false);
@@ -20,8 +22,8 @@ public final class BenchmarkRunner {
             test.run();
             return;
         }
-        final int numWarms = 6;
-        final int numRuns = 26;
+        final int numWarms = 2;
+        final int numRuns = 18;
         long maxRun = -1;
         long minRun = Long.MAX_VALUE;
         long totalElapsed = 0;

@@ -1,4 +1,5 @@
-import ch.randelshofer.fastdoubleparser.FastDoubleParser;
+package me.paulbares;
+
 import com.univocity.parsers.csv.CsvParser;
 import com.univocity.parsers.csv.CsvParserSettings;
 import generator.CsvGenerator;
@@ -9,7 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Same as Main3 but with if condition
+ * Same as me.paulbares.Main3 but with if condition
  */
 public class Main4Branching {
 

@@ -1,3 +1,5 @@
+package me.paulbares;
+
 import ch.randelshofer.fastdoubleparser.FastDoubleParser;
 import com.univocity.parsers.csv.CsvParser;
 import com.univocity.parsers.csv.CsvParserSettings;
@@ -8,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Same as Main3 but with if condition
+ * Same as me.paulbares.Main3 but with if condition
  *
  * It does not seem to change much. Maybe it is because it is way more costly to parse the strings than the rest.
  * Plus the result for price is false.
