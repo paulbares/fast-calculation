@@ -31,25 +31,22 @@
 
 package org.example;
 
+import ch.randelshofer.fastdoubleparser.FastDoubleParser;
 import org.openjdk.jmh.annotations.Benchmark;
-import org.openjdk.jmh.infra.Blackhole;
 
 public class MyBenchmark {
 
     @Benchmark
-    public void testMethod1() {
+    public double testFastDoubleParser() {
         // This is a demo/sample template for building your JMH benchmarks. Edit as needed.
         // Put your benchmark code here.
-        long parse = FastParser.parse("12345678".toCharArray());
-        Blackhole.consumeCPU(parse);
+        return FastDoubleParser.parseDouble("12345678.125");
     }
 
     @Benchmark
-    public void testMethod2() {
+    public double testJdkParseDouble() {
         // This is a demo/sample template for building your JMH benchmarks. Edit as needed.
         // Put your benchmark code here.
-        int i = Integer.parseInt("12345678");
-        Blackhole.consumeCPU(i);
+        return Double.parseDouble("12345678.125");
     }
-
 }

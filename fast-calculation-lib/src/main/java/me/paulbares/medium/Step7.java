@@ -1,4 +1,4 @@
-package medium;
+package me.paulbares.medium;
 
 import generator.CsvGenerator;
 
@@ -23,14 +23,14 @@ public class Step7 {
     static final int capacity = 1 << 18; // good perf that value
 
     public static void main(String[] args) throws Exception {
-        List<Step5.AggregateResult> results = new ArrayList<>();
+        List<AggregateResult> results = new ArrayList<>();
         INSTANCE.run(() -> {
             long length = CsvGenerator.FILE.length();
 
 //            int step = 1 << 26;
             long step = length / (ForkJoinPool.getCommonPoolParallelism() * 4); // batch size in bytes
 
-//            Step5.MyConsumer consumer = new Step5.MyConsumer();
+//            MyConsumer consumer = new MyConsumer();
 //            for (int i = 0; i < length - step; i += step) {
 //                System.out.println(String.format("from %s to %s", i, i + step));
 //                read(i, i + step, consumer);
@@ -41,7 +41,7 @@ public class Step7 {
 //            read(last, last + (length % step), consumer);
 
             ParsingTask parEach = new ParsingTask(null, step, 0, length);
-            Step5.AggregateResult r = parEach.invoke();
+            AggregateResult r = parEach.invoke();
             results.add(r);
         });
 
@@ -51,7 +51,7 @@ public class Step7 {
     private static void read(
             long startPosition,
             long endPosition,
-            Step5.Consumer consumer) throws IOException {
+            Consumer consumer) throws IOException {
         FileInputStream fileInputStream = new FileInputStream(CsvGenerator.FILE);
         FileChannel fileChannel = fileInputStream.getChannel();
         ByteBuffer byteBuffer = ByteBuffer.allocate(capacity);
@@ -110,12 +110,17 @@ public class Step7 {
         fileChannel.close();
     }
 
-    static class ParsingTask extends CountedCompleter<Step5.AggregateResult> {
+    static class ParsingTask extends CountedCompleter<AggregateResult> {
 
         private static final AtomicInteger ID = new AtomicInteger();
 
         final long targetBatchSize;
-        final Step5.MyConsumer consumer = new Step5.MyConsumer();
+        final Consumer consumer = new MyConsumer() {
+            @Override
+            public AggregateResult createResult() {
+                return new AggregateResultBranchless();
+            }
+        };
         final int id = ID.getAndIncrement();
         final List<ParsingTask> children = new ArrayList<>();
         final long low;
@@ -154,15 +159,15 @@ public class Step7 {
         }
 
         @Override
-        public Step5.AggregateResult getRawResult() {
-            return this.consumer.result;
+        public AggregateResult getRawResult() {
+            return this.consumer.getResult();
         }
 
         @Override
         public void onCompletion(CountedCompleter<?> caller) {
             for (ParsingTask child : this.children) {
 //                System.out.println(String.format("Parent %s = %s; child %s = %s", this, this.result.count, child.toString(), child.result.count));
-                this.consumer.result.merge(child.consumer.result);
+                this.consumer.getResult().merge(child.consumer.getResult());
             }
         }
 

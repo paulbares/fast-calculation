@@ -5,7 +5,11 @@ import me.paulbares.BenchmarkRunner;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 
+/**
+ * See <a href="https://stackoverflow.com/questions/11227809/why-is-processing-a-sorted-array-faster-than-processing-an-unsorted-array>SO</a>
+ */
 public class Main {
+
     public static void main(String[] args) throws Exception {
         System.out.println("Process " + ProcessHandle.current().pid());
 
