@@ -50,11 +50,11 @@ public class Step5 {
             int limit = byteBuffer.flip().limit();
             while (limit > 0) {
                 char b = (valueBuffer[i++] = (char) byteBuffer.get());
-                boolean eof = b == '\n' || b == '\r';
-                if (b == ',' || eof) {
+                boolean eol = b == '\n' || b == '\r';
+                if (b == ',' || eol) {
                     consumer.accept(valueBuffer, i - 1); // minus 1 for the comma
-                    if (eof) {
-                        consumer.eof();
+                    if (eol) {
+                        consumer.eol();
                     }
                     i = 0;
                 }
@@ -66,18 +66,18 @@ public class Step5 {
         fileChannel.close();
     }
 
-    private interface Consumer {
+    protected interface Consumer {
         void accept(char[] a, int length);
 
-        void eof();
+        void eol();
     }
 
-    private static final class MyConsumer implements Consumer {
+    protected static final class MyConsumer implements Consumer {
 
         private int count;
         private final CharArray charArray = new CharArray();
 
-        private final AggregateResult result = new AggregateResult();
+        protected final AggregateResult result = new AggregateResult();
 
         private int year;
         private int mileage;
@@ -98,13 +98,13 @@ public class Step5 {
         }
 
         @Override
-        public void eof() {
+        public void eol() {
             count = 0; // reset
         }
     }
 
 
-    public static class AggregateResult {
+    protected static class AggregateResult {
 
         final int[] min = new int[]{Integer.MAX_VALUE, Integer.MAX_VALUE};
         final int[] max = new int[]{0, 0};
@@ -130,6 +130,19 @@ public class Step5 {
             maxPrice = Math.max(maxPrice, p);
             sumPrice += p;
             count += tt & 1;
+        }
+
+        public void merge(AggregateResult r2) {
+            this.sumMileage += r2.sumMileage;
+            this.sumPrice += r2.sumPrice;
+            this.count += r2.count;
+            this.minPrice = Math.min(this.minPrice, r2.minPrice);
+            this.maxPrice = Math.max(this.maxPrice, r2.maxPrice);
+
+            this.min[0] = Math.min(this.min[0], r2.min[0]);
+            this.min[1] = Math.min(this.min[1], r2.min[1]);
+            this.max[0] = Math.max(this.max[0], r2.max[0]);
+            this.max[1] = Math.max(this.max[1], r2.max[1]);
         }
 
         public String buildResult() {

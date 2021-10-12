@@ -5,51 +5,47 @@ import generator.CsvGenerator;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
+import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 
 import static me.paulbares.BenchmarkRunner.INSTANCE;
 
-public class Step4 {
+public class Step6 {
 
     static {
         System.out.println("Process " + ProcessHandle.current().pid());
     }
 
-    static final int capacity = 1 << 22; // good perf that value
+//    static final int capacity = 1 << 16; // good perf that value
+    static final int capacity = 1 << 24; // good perf that value
 
     public static void main(String[] args) throws Exception {
         List<AggregateResult> results = new ArrayList<>();
         INSTANCE.run(() -> {
-            FileInputStream fileInputStream = new FileInputStream(CsvGenerator.FILE_PATH);
             MyConsumer consumer = new MyConsumer();
-            read(fileInputStream, consumer);
+            read(consumer);
             results.add(consumer.result);
         });
 
         System.out.println(results.get(0).buildResult());
     }
 
-    private static void read(FileInputStream fileInputStream,
-                             Consumer consumer) throws IOException {
-        FileChannel fileChannel = fileInputStream.getChannel();
-        ByteBuffer byteBuffer = ByteBuffer.allocate(capacity);
+    private static void read(Consumer consumer) throws IOException {
+        final FileChannel channel = new FileInputStream(CsvGenerator.FILE_PATH).getChannel();
+        MappedByteBuffer buffer = channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size());
+        byte[] byteBuffer = new byte[capacity];
 
         char[] valueBuffer = new char[1 << 5]; // We use this size. It is big enough
-        int read;
-        int index = 0;
+        int remaining = Integer.MAX_VALUE;
         int i = 0;
         do {
-            byteBuffer.clear();
-            if ((read = fileChannel.read(byteBuffer, index * capacity)) <= 0) {
-                return;
-            }
+            int size = Math.min(byteBuffer.length, remaining);
+            buffer.get(byteBuffer, 0, size);
 
-            int limit = byteBuffer.flip().limit();
-            while (limit > 0) {
-                char b = (valueBuffer[i++] = (char) byteBuffer.get());
+            for (int k = 0; k < size; k++) {
+                char b = (valueBuffer[i++] = (char) byteBuffer[k]);
                 boolean eol = b == '\n' || b == '\r';
                 if (b == ',' || eol) {
                     consumer.accept(valueBuffer, i - 1); // minus 1 for the comma
@@ -58,26 +54,24 @@ public class Step4 {
                     }
                     i = 0;
                 }
-                limit--;
             }
-            index++;
-        } while (read > 0);
+        } while ((remaining = buffer.remaining()) > 0);
 
-        fileChannel.close();
+        channel.close();
     }
 
-    private interface Consumer {
+    protected interface Consumer {
         void accept(char[] a, int length);
 
         void eol();
     }
 
-    private static final class MyConsumer implements Consumer {
+    protected static final class MyConsumer implements Consumer {
 
         private int count;
         private final CharArray charArray = new CharArray();
 
-        private final AggregateResult result = new AggregateResult();
+        protected final AggregateResult result = new AggregateResult();
 
         private int year;
         private int mileage;
@@ -104,7 +98,7 @@ public class Step4 {
     }
 
 
-    public static class AggregateResult {
+    protected static class AggregateResult {
 
         final int[] min = new int[]{Integer.MAX_VALUE, Integer.MAX_VALUE};
         final int[] max = new int[]{0, 0};
@@ -115,17 +109,35 @@ public class Step4 {
         int count = 0;
 
         public void aggregate(int year, int mileage, double price) {
-            if (year >= 2005) {
-//                min[0] = Math.min(min[0], year);
-//                max[0] = Math.max(min[0], year);
-//                min[1] = Math.min(min[1], mileage);
-//                max[1] = Math.max(max[1], mileage);
-//                minPrice = Math.min(minPrice, price);
-//                maxPrice = Math.max(maxPrice, price);
-                sumMileage += mileage;
-//                sumPrice += price;
-                count++;
-            }
+            int t = (year - 2005) >> 31;
+            int tt = ~t; // if year is >= 2005, i is -1 i.e all 1 bits, zero otherwise
+
+            min[0] = 2005;
+            max[0] = Math.max(min[0], year);
+            min[1] = Math.min(min[1], (t >>> 1) | mileage);
+            int m = tt & mileage;
+            max[1] = Math.max(max[1], m);
+            long rawLong = Double.doubleToRawLongBits(price);
+            minPrice = Math.min(minPrice, Double.longBitsToDouble((long) (t >>> 1) | rawLong));
+            sumMileage += m;
+            double p = Double.longBitsToDouble(((long) tt) & rawLong);
+            maxPrice = Math.max(maxPrice, p);
+            sumPrice += p;
+            count += tt & 1;
+        }
+
+        public void merge(AggregateResult r2) {
+            this.sumMileage += r2.sumMileage;
+            this.sumPrice += r2.sumPrice;
+            this.count += r2.count;
+            this.sumPrice += r2.sumPrice;
+            this.minPrice = Math.min(this.minPrice, r2.minPrice);
+            this.maxPrice = Math.max(this.maxPrice, r2.maxPrice);
+
+            this.min[0] = Math.min(this.min[0], r2.min[0]);
+            this.min[1] = Math.min(this.min[1], r2.min[1]);
+            this.max[0] = Math.max(this.max[0], r2.max[0]);
+            this.max[1] = Math.max(this.max[1], r2.max[1]);
         }
 
         public String buildResult() {

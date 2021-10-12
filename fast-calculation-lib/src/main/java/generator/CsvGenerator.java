@@ -9,6 +9,7 @@ import java.util.Random;
 public class CsvGenerator {
 
     public static final String FILE_PATH = "/Users/paul/dev/github/fast-calculation/fast-calculation-lib/src/main/resources/ford_1.5GB.csv";
+    public static final File FILE = new File(CsvGenerator.FILE_PATH);
 
     /**
      * Writes a {@link String} into a file.
