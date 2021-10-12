@@ -1,4 +1,4 @@
-package medium;
+package me.paulbares.medium;
 
 import ch.randelshofer.fastdoubleparser.FastDoubleParser;
 import generator.CsvGenerator;

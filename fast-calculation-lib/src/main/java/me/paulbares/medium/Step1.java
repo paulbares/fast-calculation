@@ -1,4 +1,4 @@
-package medium;
+package me.paulbares.medium;
 
 import generator.CsvGenerator;
 

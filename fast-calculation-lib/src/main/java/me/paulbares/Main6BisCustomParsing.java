@@ -1,7 +1,6 @@
 package me.paulbares;
 
 import com.google.common.base.Splitter;
-import com.univocity.parsers.common.input.EOFException;
 import generator.CsvGenerator;
 import javolution.text.CharArray;
 
@@ -35,7 +34,6 @@ public class Main6BisCustomParsing {
             results.add(result);
         });
         System.out.println(results);
-        System.out.println(EOFException.count.get());
     }
 
     static class ParsingTask extends CountedCompleter<AggregateResult> {
