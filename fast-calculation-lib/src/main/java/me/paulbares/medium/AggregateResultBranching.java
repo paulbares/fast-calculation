@@ -4,7 +4,7 @@ public class AggregateResultBranching implements AggregateResult {
 
     final int[] min = new int[]{Integer.MAX_VALUE, Integer.MAX_VALUE};
     final int[] max = new int[]{0, 0};
-    int sumMileage = 0;
+    long sumMileage = 0;
     double sumPrice = 0;
     double minPrice = Double.MAX_VALUE;
     double maxPrice = 0;

@@ -22,8 +22,8 @@ public final class BenchmarkRunner {
             test.run();
             return;
         }
-        final int numWarms = 2;
-        final int numRuns = 18;
+        final int numWarms = 3;
+        final int numRuns = 14;
         long maxRun = -1;
         long minRun = Long.MAX_VALUE;
         long totalElapsed = 0;
