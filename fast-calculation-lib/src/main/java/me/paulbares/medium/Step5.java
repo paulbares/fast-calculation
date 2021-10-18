@@ -54,7 +54,7 @@ public class Step5 {
             int limit = byteBuffer.flip().limit();
             while (limit > 0) {
                 char b = (valueBuffer[i++] = (char) byteBuffer.get());
-                boolean eol = b == '\n' || b == '\r';
+                boolean eol = b == '\n';
                 if (b == ',' || eol) {
                     consumer.accept(valueBuffer, i - 1); // minus 1 for the comma
                     if (eol) {
