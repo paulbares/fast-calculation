@@ -20,7 +20,7 @@ public class Step6 {
         System.out.println("Process " + ProcessHandle.current().pid());
     }
 
-    static final int capacity = 1 << 18; // good perf that value
+    static final int capacity = 1 << 22; // good perf that value
 
     public static void main(String[] args) throws Exception {
         List<AggregateResult> results = new ArrayList<>();
