@@ -19,7 +19,8 @@ public final class BenchmarkRunner {
      */
     public void run(Benchmark test) throws Exception {
         if (single) {
-            test.run();
+            final long elapsed = test.run() / 1000_000L;
+            System.out.println("Single test time: " + elapsed + "ms");
             return;
         }
         final int numWarms = 3;

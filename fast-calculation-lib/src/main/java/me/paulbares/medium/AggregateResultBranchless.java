@@ -8,7 +8,7 @@ public class AggregateResultBranchless extends AAggregateResult {
         int tt = ~t; // if year is >= 2005, i is -1 i.e all 1 bits, zero otherwise
 
         min[0] = 2005;
-        max[0] = Math.max(min[0], year);
+        max[0] = Math.max(max[0], year);
         min[1] = Math.min(min[1], (t >>> 1) | mileage);
         int m = tt & mileage;
         max[1] = Math.max(max[1], m);
