@@ -36,8 +36,7 @@ public class Step4 {
         System.out.println(results.get(0).buildResult());
     }
 
-    private static void read(FileInputStream fileInputStream,
-                             Consumer consumer) throws IOException {
+    static void read(FileInputStream fileInputStream, Consumer consumer) throws IOException {
         FileChannel fileChannel = fileInputStream.getChannel();
         ByteBuffer byteBuffer = ByteBuffer.allocate(capacity);
 

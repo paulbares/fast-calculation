@@ -4,8 +4,9 @@ import ch.randelshofer.fastdoubleparser.FastDoubleParser;
 
 public abstract class MyConsumer implements Consumer<AggregateResult> {
 
+    final AggregateResult result = createResult();
+
     private final CharArray charArray = new CharArray();
-    protected final AggregateResult result = createResult();
 
     private int count;
     private int year;
